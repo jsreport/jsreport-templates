@@ -1,0 +1,23 @@
+{
+  "name": "jsreport-templates",
+  "version": "0.0.1",
+  "description": "jsreport extension adding support for storing templates",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "keywords": [
+    "jsreport"
+  ],
+  "license": "LGPL",
+  "dependencies": {
+    "node.extend": "^1.1.5",
+    "q": "^1.4.1",
+    "shortid": "^2.2.4",
+    "stream": "0.0.2",
+    "string": "^3.3.1",
+    "underscore": "^1.8.3",
+    "uuid": "^2.0.1"
+  },
+  "author": "Jan Blaha",
+  "devDependencies": {}
+}
