@@ -41,6 +41,7 @@
     "jsreport-core": "*",
     "jsreport-express": "*",
     "mocha": "^2.3.3",
+    "requirejs": "^2.1.22",
     "standard": "^5.3.1"
   }
 }
