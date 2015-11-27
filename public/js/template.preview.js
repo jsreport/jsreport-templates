@@ -1,32 +1,12 @@
 define(["underscore", "jquery", "app"], function (_, $, app) {
 
     function getUIState(model) {
-
-        /*function justNotNull(o) {
-            var clone = {};
-            for (var key in o) {
-                if (o[key] != null)
-                    clone[key] = o[key];
-            }
-
-            return clone;
-        }*/
-
-        //var state = {};
         var state = model.toJSON();
-        /*for (var key in json) {
-            if (json[key] != null)
-                state[key] = justNotNull(json[key].toJSON());
-            else
-                state[key] = json[key];
-        }*/
 
         state.content = state.content || " ";
         state.helpers = state.helpers || "";
 
         delete state._id;
-        /* not sure about this, I need shortid for reports, so why it is here deleted */
-        //delete state.shortid;
         return state;
     }
 
@@ -65,10 +45,15 @@ define(["underscore", "jquery", "app"], function (_, $, app) {
 
                 for (var key in body) {
                     if (_.isObject(body[key])) {
+                        // somehow it skips empty array for template.scripts, this condition fixes that
+                        if (body[key] instanceof Array && body[key].length === 0) {
+                            addInput(mapForm, path + "[" + key + "]", []);
+                        }
                         addBody(path + "[" + key + "]", body[key]);
                     } else {
-                        if (body[key] !== undefined && !(body[key] instanceof Array))
+                        if (body[key] !== undefined && !(body[key] instanceof Array)) {
                             addInput(mapForm, path + "[" + key + "]", body[key]);
+                        }
                     }
                 }
             }
