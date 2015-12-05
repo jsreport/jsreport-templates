@@ -4,6 +4,14 @@
 
 define(["app", "jquery", "core/basicModel"], function(app, $, ModelBase) {
 
+    var defaultEngine = app.engines.filter(function(e) {
+        return e === 'handlebars'
+    }).length ? 'handlebars' : 'none'
+
+    var defaultRecipe = app.recipes.filter(function(r) {
+        return r === 'phantom-pdf'
+    }).length ? 'phantom-pdf' : 'html'
+
     return ModelBase.extend({
         odata: "templates",
         url: "odata/templates",
@@ -13,8 +21,8 @@ define(["app", "jquery", "core/basicModel"], function(app, $, ModelBase) {
         },
 
         defaults: {
-            engine: "handlebars",
-            recipe: "phantom-pdf"
+            engine: defaultEngine,
+            recipe: defaultRecipe
         }
     });
 });
