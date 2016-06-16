@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "jsreport extension adding support for storing templates",
   "scripts": {
-    "test": "mocha test && standard",
+    "test": "mocha test --timeout 5000 && standard",
     "build": "jsreport-studio-build",
     "prepublish": "in-publish && jsreport-studio-build || not-in-publish"
   },
