@@ -18,6 +18,7 @@ describe('templating', function () {
   it('handleBefore should find by _id and use template', function (done) {
     var request = {
       template: {},
+      logger: reporter.logger,
       context: reporter.context,
       options: {recipe: 'html'}
     }
@@ -35,6 +36,7 @@ describe('templating', function () {
   it('should callback error when missing template', function (done) {
     var request = {
       template: {_id: '507f191e810c19729de860ea'},
+      logger: reporter.logger,
       context: reporter.context,
       options: {recipe: 'html'}
     }
@@ -52,6 +54,7 @@ describe('templating', function () {
   it('handleBefore should find by shortid and use template', function (done) {
     var request = {
       template: {},
+      logger: reporter.logger,
       context: reporter.context,
       options: {recipe: 'html'}
     }
@@ -69,6 +72,7 @@ describe('templating', function () {
   it('handleBefore should find by name and use template', function (done) {
     var request = {
       template: {name: 'x'},
+      logger: reporter.logger,
       context: reporter.context,
       options: {recipe: 'html'}
     }
@@ -85,6 +89,7 @@ describe('templating', function () {
   it('handleBefore with content and not existing name should pass', function (done) {
     var request = {
       template: {name: 'x', content: ' '},
+      logger: reporter.logger,
       context: reporter.context,
       options: {recipe: 'html'}
     }
@@ -99,6 +104,7 @@ describe('templating', function () {
     var request = {
       template: {},
       context: reporter.context,
+      logger: reporter.logger,
       options: {recipe: 'html'}
     }
 
@@ -108,6 +114,7 @@ describe('templating', function () {
       return reporter.templates.handleBeforeRender(request, {}).fail(function () {
         request = {
           template: {shortid: t.shortid},
+          logger: reporter.logger,
           context: reporter.context,
           options: {recipe: 'html'}
         }
@@ -125,6 +132,7 @@ describe('templating', function () {
     var request = {
       template: {},
       context: reporter.context,
+      logger: reporter.logger,
       options: {recipe: 'html'}
     }
 
