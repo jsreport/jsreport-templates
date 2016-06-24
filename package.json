@@ -1,6 +1,6 @@
 {
   "name": "jsreport-templates",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "jsreport extension adding support for storing templates",
   "scripts": {
     "test": "mocha test --timeout 10000 && standard",
