@@ -33,7 +33,7 @@ describe('templating', function () {
     }).catch(done)
   })
 
-  it('should callback error when missing template', function (done) {
+  it('should callback weak error when missing template', function () {
     var request = {
       template: {_id: '507f191e810c19729de860ea'},
       logger: reporter.logger,
@@ -43,11 +43,8 @@ describe('templating', function () {
 
     var response = {}
 
-    reporter.templates.handleBeforeRender(request, response).then(function () {
-      done(new Error('Should fail'))
-    }).catch(function (err) {
-      assert.notEqual(null, err)
-      done()
+    return reporter.templates.handleBeforeRender(request, response).catch(function (err) {
+      assert.equal(err.weak, true)
     })
   })
 
