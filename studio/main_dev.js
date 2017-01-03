@@ -13,6 +13,10 @@ Studio.addToolbarComponent((props) => {
     return <span />
   }
 
+  if (Studio.extensions['templates'].options['studio-link-button-visibility'] === false) {
+    return <span />
+  }
+
   return <div className='toolbar-button' onClick={() => Studio.openModal(linkModal, {entity: props.tab.entity})}>
     <i className='fa fa-link' />Link
   </div>
