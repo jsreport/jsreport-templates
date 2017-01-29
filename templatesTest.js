@@ -5,15 +5,17 @@ var Reporter = require('jsreport-core').Reporter
 describe('templating', function () {
   var reporter
 
-  beforeEach(function () {
+  beforeEach(function (done) {
     reporter = new Reporter({
       rootDirectory: path.join(__dirname, '../')
     })
 
-    return reporter.init()
+    reporter.init().then(function () {
+      done()
+    }).fail(done)
   })
 
-  it('handleBefore should find by _id and use template', function () {
+  it('handleBefore should find by _id and use template', function (done) {
     var request = {
       template: {},
       logger: reporter.logger,
@@ -21,12 +23,14 @@ describe('templating', function () {
       options: {recipe: 'html'}
     }
 
-    return reporter.documentStore.collection('templates').insert({content: 'foo'}).then(function (t) {
+    reporter.documentStore.collection('templates').insert({content: 'foo'}).then(function (t) {
       request.template._id = t._id
-      return reporter.templates.handleBeforeRender(request, {}).then(function () {
+      reporter.templates.handleBeforeRender(request, {}).then(function () {
         assert.equal('foo', request.template.content)
+
+        done()
       })
-    })
+    }).catch(done)
   })
 
   it('should callback weak error when missing template', function () {
@@ -44,7 +48,7 @@ describe('templating', function () {
     })
   })
 
-  it('handleBefore should find by shortid and use template', function () {
+  it('handleBefore should find by shortid and use template', function (done) {
     var request = {
       template: {},
       logger: reporter.logger,
@@ -52,15 +56,17 @@ describe('templating', function () {
       options: {recipe: 'html'}
     }
 
-    return reporter.documentStore.collection('templates').insert({content: 'foo'}).then(function (t) {
+    reporter.documentStore.collection('templates').insert({content: 'foo'}).then(function (t) {
       request.template.shortid = t.shortid
       return reporter.templates.handleBeforeRender(request, {}).then(function () {
         assert.equal('foo', request.template.content)
+
+        done()
       })
-    })
+    }).catch(done)
   })
 
-  it('handleBefore should find by name and use template', function () {
+  it('handleBefore should find by name and use template', function (done) {
     var request = {
       template: {name: 'x'},
       logger: reporter.logger,
@@ -68,14 +74,16 @@ describe('templating', function () {
       options: {recipe: 'html'}
     }
 
-    return reporter.documentStore.collection('templates').insert({content: 'foo', name: 'x'}).then(function (t) {
+    reporter.documentStore.collection('templates').insert({content: 'foo', name: 'x'}).then(function (t) {
       return reporter.templates.handleBeforeRender(request, {}).then(function () {
         assert.equal('foo', request.template.content)
+
+        done()
       })
-    })
+    }).catch(done)
   })
 
-  it('handleBefore with content and not existing name should pass', function () {
+  it('handleBefore with content and not existing name should pass', function (done) {
     var request = {
       template: {name: 'x', content: ' '},
       logger: reporter.logger,
@@ -85,10 +93,11 @@ describe('templating', function () {
 
     return reporter.templates.handleBeforeRender(request, {}).then(function () {
       assert.equal(' ', request.template.content)
-    })
+      done()
+    }).catch(done)
   })
 
-  it('handleBefore with not existing template should fail requesting handleBefore second time with existing template should succeed', function () {
+  it('handleBefore with not existing template should fail requesting handleBefore second time with existing template should succeed', function (done) {
     var request = {
       template: {},
       context: reporter.context,
@@ -96,10 +105,10 @@ describe('templating', function () {
       options: {recipe: 'html'}
     }
 
-    return reporter.documentStore.collection('templates').insert({content: 'foo'}).then(function (t) {
+    reporter.documentStore.collection('templates').insert({content: 'foo'}).then(function (t) {
       request.template.shortid = 'not existing'
 
-      return reporter.templates.handleBeforeRender(request, {}).catch(function () {
+      return reporter.templates.handleBeforeRender(request, {}).fail(function () {
         request = {
           template: {shortid: t.shortid},
           logger: reporter.logger,
@@ -109,9 +118,11 @@ describe('templating', function () {
 
         return reporter.templates.handleBeforeRender(request, {}).then(function () {
           assert.equal('foo', request.template.content)
+
+          done()
         })
       })
-    })
+    }).catch(done)
   })
 
   it('handleBefore should throw when no content and id specified', function () {
@@ -127,14 +138,15 @@ describe('templating', function () {
     })
   })
 
-  it('deleting should work', function () {
-    return reporter.documentStore.collection('templates').insert({content: 'foo'})
+  it('deleting should work', function (done) {
+    reporter.documentStore.collection('templates').insert({content: 'foo'})
       .then(function (t) {
         return reporter.documentStore.collection('templates').remove({shortid: t.shortid}).then(function () {
           return reporter.documentStore.collection('templates').find({}).then(function (list) {
             assert.equal(list.length, 0)
+            done()
           })
         })
-      })
+      }).catch(done)
   })
 })
