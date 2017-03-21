@@ -12,7 +12,7 @@ It also extends [jsreport studio](https://github.com/jsreport/jsreport-express) 
 
 > `GET` http://jsreport-host/odata/templates
 
-##jsreport-core
+## jsreport-core
 You can apply this extension also manually to [jsreport-core](https://github.com/jsreport/jsreport-core)
 
 ```js
