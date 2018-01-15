@@ -34,14 +34,14 @@
   },
   "author": "Jan Blaha",
   "devDependencies": {
-    "babel-eslint": "8.0.2",
-    "eslint": "4.11.0",
+    "babel-eslint": "8.2.1",
+    "eslint": "4.15.0",
     "eslint-config-standard-jsx": "4.0.2",
     "eslint-plugin-babel": "4.1.2",
     "in-publish": "2.0.0",
     "jsreport-core": "1.5.1",
-    "jsreport-studio-dev": "1.1.1",
-    "mocha": "4.0.1",
+    "jsreport-studio-dev": "1.1.2",
+    "mocha": "4.1.0",
     "standard": "10.0.3"
   },
   "engines": {
