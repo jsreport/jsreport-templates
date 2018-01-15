@@ -1,140 +1,49 @@
-var path = require('path')
-var assert = require('assert')
-var JsReport = require('jsreport-core')
+const JsReport = require('jsreport-core')
+require('should')
 
 describe('templating', function () {
-  var jsreport
+  let jsreport
 
-  beforeEach(function () {
-    jsreport = new JsReport({
-      rootDirectory: path.join(__dirname, '../')
-    })
+  beforeEach(() => {
+    jsreport = new JsReport()
+    jsreport.use(require('../')())
 
     return jsreport.init()
   })
 
-  it('handleBefore should find by _id and use template', function () {
-    var request = {
-      template: {},
-      logger: jsreport.logger,
-      context: jsreport.context,
-      options: {recipe: 'html'}
-    }
-
-    return jsreport.documentStore.collection('templates').insert({content: 'foo'}).then(function (t) {
-      request.template._id = t._id
-      return jsreport.templates.handleBeforeRender(request, {}).then(function () {
-        assert.equal('foo', request.template.content)
-      })
-    })
+  it('should find by _id and use template', async () => {
+    const template = await jsreport.documentStore.collection('templates').insert({content: 'foo', engine: 'none', recipe: 'html'})
+    const response = await jsreport.render({ template: { _id: template._id } })
+    response.content.toString().should.be.eql('foo')
   })
 
-  it('should callback weak error when missing template', function () {
-    var request = {
-      template: {_id: '507f191e810c19729de860ea'},
-      logger: jsreport.logger,
-      context: jsreport.context,
-      options: {recipe: 'html'}
+  it('should callback weak error when missing template', async () => {
+    try {
+      await jsreport.render({template: { _id: 'aaa' }})
+      throw new Error('Should have failed')
+    } catch (e) {
+      e.message.should.containEql('Unable to find specified template')
     }
-
-    var response = {}
-
-    return jsreport.templates.handleBeforeRender(request, response).catch(function (err) {
-      assert.equal(err.weak, true)
-    })
   })
 
-  it('handleBefore should find by shortid and use template', function () {
-    var request = {
-      template: {},
-      logger: jsreport.logger,
-      context: jsreport.context,
-      options: {recipe: 'html'}
-    }
-
-    return jsreport.documentStore.collection('templates').insert({content: 'foo'}).then(function (t) {
-      request.template.shortid = t.shortid
-      return jsreport.templates.handleBeforeRender(request, {}).then(function () {
-        assert.equal('foo', request.template.content)
-      })
-    })
+  it('should find by shortid and use template', async () => {
+    const template = await jsreport.documentStore.collection('templates').insert({content: 'foo', recipe: 'html', engine: 'none'})
+    const res = await jsreport.render({ template: { shortid: template.shortid } })
+    res.content.toString().should.be.eql('foo')
   })
 
-  it('handleBefore should find by name and use template', function () {
-    var request = {
-      template: {name: 'x'},
-      logger: jsreport.logger,
-      context: jsreport.context,
-      options: {recipe: 'html'}
-    }
-
-    return jsreport.documentStore.collection('templates').insert({content: 'foo', name: 'x'}).then(function (t) {
-      return jsreport.templates.handleBeforeRender(request, {}).then(function () {
-        assert.equal('foo', request.template.content)
-      })
-    })
+  it('should find by name and use template', async () => {
+    const template = await jsreport.documentStore.collection('templates').insert({name: 'xxx', content: 'foo', recipe: 'html', engine: 'none'})
+    const res = await jsreport.render({ template: { name: template.name } })
+    res.content.toString().should.be.eql('foo')
   })
 
-  it('handleBefore with content and not existing name should pass', function () {
-    var request = {
-      template: {name: 'x', content: ' '},
-      logger: jsreport.logger,
-      context: jsreport.context,
-      options: {recipe: 'html'}
+  it('render should throw when no content and id specified', async () => {
+    try {
+      await jsreport.render({template: { }})
+      throw new Error('Should have failed')
+    } catch (e) {
+      e.message.should.containEql('emplate must contains _id')
     }
-
-    return jsreport.templates.handleBeforeRender(request, {}).then(function () {
-      assert.equal(' ', request.template.content)
-    })
-  })
-
-  it('handleBefore with not existing template should fail requesting handleBefore second time with existing template should succeed', function () {
-    var request = {
-      template: {},
-      context: jsreport.context,
-      logger: jsreport.logger,
-      options: {recipe: 'html'}
-    }
-
-    return jsreport.documentStore.collection('templates').insert({content: 'foo'}).then(function (t) {
-      request.template.shortid = 'not existing'
-
-      return jsreport.templates.handleBeforeRender(request, {}).catch(function () {
-        request = {
-          template: {shortid: t.shortid},
-          logger: jsreport.logger,
-          context: jsreport.context,
-          options: {recipe: 'html'}
-        }
-
-        return jsreport.templates.handleBeforeRender(request, {}).then(function () {
-          assert.equal('foo', request.template.content)
-        })
-      })
-    })
-  })
-
-  it('handleBefore should throw when no content and id specified', function () {
-    var request = {
-      template: {},
-      context: jsreport.context,
-      logger: jsreport.logger,
-      options: {recipe: 'html'}
-    }
-
-    assert.throws(function () {
-      jsreport.templates.handleBeforeRender(request, {})
-    })
-  })
-
-  it('deleting should work', function () {
-    return jsreport.documentStore.collection('templates').insert({content: 'foo'})
-      .then(function (t) {
-        return jsreport.documentStore.collection('templates').remove({shortid: t.shortid}).then(function () {
-          return jsreport.documentStore.collection('templates').find({}).then(function (list) {
-            assert.equal(list.length, 0)
-          })
-        })
-      })
   })
 })
