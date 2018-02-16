@@ -17,13 +17,8 @@ describe('templating', function () {
     response.content.toString().should.be.eql('foo')
   })
 
-  it('should callback weak error when missing template', async () => {
-    try {
-      await jsreport.render({template: { _id: 'aaa' }})
-      throw new Error('Should have failed')
-    } catch (e) {
-      e.message.should.containEql('Unable to find specified template')
-    }
+  it('should callback weak error when missing template', () => {
+    return jsreport.render({template: { _id: 'aaa' }}).should.be.rejectedWith(/Unable to find specified template/)
   })
 
   it('should find by shortid and use template', async () => {
@@ -38,12 +33,19 @@ describe('templating', function () {
     res.content.toString().should.be.eql('foo')
   })
 
-  it('render should throw when no content and id specified', async () => {
-    try {
-      await jsreport.render({template: { }})
-      throw new Error('Should have failed')
-    } catch (e) {
-      e.message.should.containEql('emplate must contains _id')
-    }
+  it('render should throw when no content and id specified', () => {
+    return jsreport.render({template: { }}).should.be.rejectedWith(/emplate must contains _id/)
+  })
+
+  it('should fail when creating template without engine', () => {
+    return jsreport.documentStore.collection('templates')
+      .insert({name: 'xxx', content: 'foo', recipe: 'html'})
+      .should.be.rejected()
+  })
+
+  it('should fail when creating template without recipe', () => {
+    return jsreport.documentStore.collection('templates')
+      .insert({name: 'xxx', content: 'foo', engine: 'none'})
+      .should.be.rejected()
   })
 })
