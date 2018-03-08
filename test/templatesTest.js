@@ -48,4 +48,12 @@ describe('templating', function () {
       .insert({name: 'xxx', content: 'foo', engine: 'none'})
       .should.be.rejected()
   })
+
+  it('should fill reportName meta', async () => {
+    await jsreport.documentStore.collection('templates')
+      .insert({name: 'xxx', engine: 'none', content: 'foo', recipe: 'html'})
+
+    const res = await jsreport.render({template: {name: 'xxx'}})
+    res.meta.reportName.should.be.eql('xxx')
+  })
 })
