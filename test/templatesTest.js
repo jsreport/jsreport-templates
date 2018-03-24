@@ -12,7 +12,7 @@ describe('templating', function () {
   })
 
   it('should find by _id and use template', async () => {
-    const template = await jsreport.documentStore.collection('templates').insert({content: 'foo', engine: 'none', recipe: 'html'})
+    const template = await jsreport.documentStore.collection('templates').insert({content: 'foo', name: 'foo', engine: 'none', recipe: 'html'})
     const response = await jsreport.render({ template: { _id: template._id } })
     response.content.toString().should.be.eql('foo')
   })
@@ -22,7 +22,7 @@ describe('templating', function () {
   })
 
   it('should find by shortid and use template', async () => {
-    const template = await jsreport.documentStore.collection('templates').insert({content: 'foo', recipe: 'html', engine: 'none'})
+    const template = await jsreport.documentStore.collection('templates').insert({content: 'foo', name: 'foo', recipe: 'html', engine: 'none'})
     const res = await jsreport.render({ template: { shortid: template.shortid } })
     res.content.toString().should.be.eql('foo')
   })
