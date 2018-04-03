@@ -33,6 +33,18 @@ describe('templating', function () {
     res.content.toString().should.be.eql('foo')
   })
 
+  it('should set report name as template name by default', async () => {
+    const template = await jsreport.documentStore.collection('templates').insert({name: 'baz', content: 'foo', recipe: 'html', engine: 'none'})
+    const res = await jsreport.render({ template: { name: template.name } })
+    res.meta.reportName.should.be.eql('baz')
+  })
+
+  it('should not override custom report name', async () => {
+    const template = await jsreport.documentStore.collection('templates').insert({name: 'bar', content: 'foo', recipe: 'html', engine: 'none'})
+    const res = await jsreport.render({ template: { name: template.name }, options: { reportName: 'custom-report-name' } })
+    res.meta.reportName.should.be.eql('custom-report-name')
+  })
+
   it('render should throw when no content and id specified', () => {
     return jsreport.render({template: { }}).should.be.rejectedWith(/emplate must contains _id/)
   })
