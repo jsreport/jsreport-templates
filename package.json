@@ -39,11 +39,11 @@
     "eslint-config-standard-jsx": "4.0.2",
     "eslint-plugin-babel": "4.1.2",
     "in-publish": "2.0.0",
-    "jsreport-core": "jsreport/jsreport-core#2.0.0-beta",
+    "jsreport-core": "github:jsreport/jsreport-core#2.0.0-beta",
     "jsreport-studio-dev": "1.1.2",
     "mocha": "4.1.0",
-    "standard": "10.0.3",
-    "should": "13.2.1"
+    "should": "13.2.1",
+    "standard": "10.0.3"
   },
   "engines": {
     "node": ">=8.0"
