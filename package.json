@@ -35,15 +35,15 @@
   "author": "Jan Blaha",
   "devDependencies": {
     "babel-eslint": "8.2.1",
-    "eslint": "4.15.0",
-    "eslint-config-standard-jsx": "4.0.2",
-    "eslint-plugin-babel": "4.1.2",
+    "eslint": "4.19.1",
+    "eslint-config-standard-jsx": "5.0.0",
+    "eslint-plugin-babel": "5.1.0",
     "in-publish": "2.0.0",
     "jsreport-core": "github:jsreport/jsreport-core#2.0.0-beta",
     "jsreport-studio-dev": "1.1.2",
-    "mocha": "4.1.0",
+    "mocha": "5.1.1",
     "should": "13.2.1",
-    "standard": "10.0.3"
+    "standard": "11.0.1"
   },
   "engines": {
     "node": ">=8.0"
