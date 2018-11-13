@@ -68,4 +68,27 @@ describe('templating', function () {
     const res = await jsreport.render({template: {name: 'xxx'}})
     res.meta.reportName.should.be.eql('xxx')
   })
+
+  it('should fill context.currentFolderPath in render', async () => {
+    await jsreport.documentStore.collection('folders').insert({
+      name: 'folder',
+      shortid: 'folder'
+    })
+    await jsreport.documentStore.collection('templates')
+      .insert({
+        name: 'xxx',
+        engine: 'none',
+        content: 'foo',
+        recipe: 'html',
+        folder: { shortid: 'folder' }
+      })
+
+    return new Promise((resolve, reject) => {
+      jsreport.beforeRenderListeners.add('test', (req, res) => {
+        req.context.currentFolderPath.should.be.eql('/folder')
+        resolve()
+      })
+      jsreport.render({template: {name: 'xxx'}}).catch(reject)
+    })
+  })
 })
