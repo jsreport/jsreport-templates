@@ -91,4 +91,26 @@ describe('templating', function () {
       jsreport.render({template: {name: 'xxx'}}).catch(reject)
     })
   })
+
+  it('should find template specified using absolute path', async () => {
+    await jsreport.documentStore.collection('folders').insert({
+      name: 'folder',
+      shortid: 'folder'
+    })
+    await jsreport.documentStore.collection('templates')
+      .insert({
+        name: 'xxx',
+        engine: 'none',
+        content: 'foo',
+        recipe: 'html',
+        folder: { shortid: 'folder' }
+      })
+
+    const res = await jsreport.render({
+      template: {
+        name: 'folder/xxx'
+      }
+    })
+    res.content.toString().should.be.eql('foo')
+  })
 })
