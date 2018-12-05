@@ -92,25 +92,154 @@ describe('templating', function () {
     })
   })
 
+  it('should throw error when duplicated results are found', async () => {
+    await jsreport.documentStore.collection('folders').insert({
+      name: 'folder',
+      shortid: 'folder'
+    })
+    await jsreport.documentStore.collection('templates').insert({
+      name: 'xxx',
+      engine: 'none',
+      content: 'foo',
+      recipe: 'html',
+      folder: { shortid: 'folder' }
+    })
+    await jsreport.documentStore.collection('templates').insert({
+      name: 'xxx',
+      engine: 'none',
+      content: 'foo',
+      recipe: 'html'
+    })
+    try {
+      await jsreport.render({
+        template: {
+          name: 'xxx'
+        }
+      })
+
+      throw new Error('should have failed when duplicates are found')
+    } catch (e) {
+      e.message.includes('Duplicated templates').should.be.true()
+    }
+  })
+
   it('should find template specified using absolute path', async () => {
     await jsreport.documentStore.collection('folders').insert({
       name: 'folder',
       shortid: 'folder'
     })
-    await jsreport.documentStore.collection('templates')
-      .insert({
-        name: 'xxx',
-        engine: 'none',
-        content: 'foo',
-        recipe: 'html',
-        folder: { shortid: 'folder' }
-      })
-
+    await jsreport.documentStore.collection('templates').insert({
+      name: 'xxx',
+      engine: 'none',
+      content: 'foo',
+      recipe: 'html',
+      folder: { shortid: 'folder' }
+    })
     const res = await jsreport.render({
       template: {
-        name: 'folder/xxx'
+        name: '/folder/xxx'
+      }
+    })
+
+    res.content.toString().should.be.eql('foo')
+  })
+
+  it('should find template at specifed path when there are others with same name', async () => {
+    await jsreport.documentStore.collection('folders').insert({
+      name: 'folder',
+      shortid: 'folder'
+    })
+    await jsreport.documentStore.collection('templates').insert({
+      name: 'xxx',
+      engine: 'none',
+      content: 'foo',
+      recipe: 'html',
+      folder: { shortid: 'folder' }
+    })
+    await jsreport.documentStore.collection('templates').insert({
+      name: 'xxx',
+      engine: 'none',
+      content: 'foo-root',
+      recipe: 'html'
+    })
+    const res = await jsreport.render({
+      template: {
+        name: '/xxx'
+      }
+    })
+
+    res.content.toString().should.be.eql('foo-root')
+  })
+
+  it('should find template specified using absolute path with trailing slash', async () => {
+    await jsreport.documentStore.collection('folders').insert({
+      name: 'folder',
+      shortid: 'folder'
+    })
+    await jsreport.documentStore.collection('templates').insert({
+      name: 'xxx',
+      engine: 'none',
+      content: 'foo',
+      recipe: 'html',
+      folder: { shortid: 'folder' }
+    })
+    const res = await jsreport.render({
+      template: {
+        name: '/folder/xxx/'
       }
     })
     res.content.toString().should.be.eql('foo')
+  })
+
+  it('should throw error when path is not absolute', async () => {
+    await jsreport.documentStore.collection('folders').insert({
+      name: 'folder',
+      shortid: 'folder'
+    })
+    await jsreport.documentStore.collection('templates').insert({
+      name: 'xxx',
+      engine: 'none',
+      content: 'foo',
+      recipe: 'html',
+      folder: { shortid: 'folder' }
+    })
+
+    try {
+      await jsreport.render({
+        template: {
+          name: 'folder/xxx'
+        }
+      })
+
+      throw new Error('should have failed when passing non absolute path')
+    } catch (e) {
+      e.message.includes('Invalid template path').should.be.true()
+    }
+  })
+
+  it('should throw error when using invalid paths', async () => {
+    try {
+      await jsreport.render({
+        template: {
+          name: '/'
+        }
+      })
+
+      throw new Error('should have failed when passing invalid path')
+    } catch (e) {
+      e.message.includes('Invalid template path').should.be.true()
+    }
+
+    try {
+      await jsreport.render({
+        template: {
+          name: '///'
+        }
+      })
+
+      throw new Error('should have failed when passing invalid path')
+    } catch (e) {
+      e.message.includes('Invalid template path').should.be.true()
+    }
   })
 })
