@@ -171,6 +171,27 @@ describe('templating', function () {
     res.content.toString().should.be.eql('foo-root')
   })
 
+  it('should find template just by name no matter its location if there is no other template with same name', async () => {
+    await jsreport.documentStore.collection('folders').insert({
+      name: 'folder',
+      shortid: 'folder'
+    })
+    await jsreport.documentStore.collection('templates').insert({
+      name: 'xxx',
+      engine: 'none',
+      content: 'foo',
+      recipe: 'html',
+      folder: { shortid: 'folder' }
+    })
+    const res = await jsreport.render({
+      template: {
+        name: 'xxx'
+      }
+    })
+
+    res.content.toString().should.be.eql('foo')
+  })
+
   it('should find template specified using absolute path with trailing slash', async () => {
     await jsreport.documentStore.collection('folders').insert({
       name: 'folder',
