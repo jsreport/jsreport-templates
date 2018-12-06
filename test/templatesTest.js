@@ -192,26 +192,6 @@ describe('templating', function () {
     res.content.toString().should.be.eql('foo')
   })
 
-  it('should find template specified using absolute path with trailing slash', async () => {
-    await jsreport.documentStore.collection('folders').insert({
-      name: 'folder',
-      shortid: 'folder'
-    })
-    await jsreport.documentStore.collection('templates').insert({
-      name: 'xxx',
-      engine: 'none',
-      content: 'foo',
-      recipe: 'html',
-      folder: { shortid: 'folder' }
-    })
-    const res = await jsreport.render({
-      template: {
-        name: '/folder/xxx/'
-      }
-    })
-    res.content.toString().should.be.eql('foo')
-  })
-
   it('should throw error when path is not absolute', async () => {
     await jsreport.documentStore.collection('folders').insert({
       name: 'folder',
