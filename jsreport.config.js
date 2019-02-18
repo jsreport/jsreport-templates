@@ -9,8 +9,7 @@ module.exports = {
         type: 'object',
         properties: {
           'studio-link-button-visibility': {
-            type: 'boolean',
-            $exposeToApi: true
+            type: 'boolean'
           }
         }
       }
