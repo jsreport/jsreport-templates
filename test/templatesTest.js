@@ -243,4 +243,22 @@ describe('templating', function () {
       e.message.includes('Invalid template path').should.be.true()
     }
   })
+
+  it('should prevent simple cycles', async () => {
+    await jsreport.documentStore.collection('templates').insert({content: 'foo', name: 'A', engine: 'none', recipe: 'html'})
+    jsreport.beforeRenderListeners.add('text', async (req, res) => {
+      await jsreport.render({ template: { name: 'A' } }, req)
+    })
+    return jsreport.render({ template: { name: 'A' } }).should.be.rejectedWith(/cycle/)
+  })
+
+  it('should not catch cycles when same template rendered multiple times at the same hierarchy level', async () => {
+    await jsreport.documentStore.collection('templates').insert({content: 'foo', name: 'A', engine: 'none', recipe: 'html'})
+    await jsreport.documentStore.collection('templates').insert({content: 'foo', name: 'B', engine: 'none', recipe: 'html'})
+    jsreport.beforeRenderListeners.add('text', async (req, res) => {
+      await jsreport.render({ template: { name: 'B' } }, req)
+      await jsreport.render({ template: { name: 'B' } }, req)
+    })
+    await jsreport.render({ template: { name: 'A' } })
+  })
 })
