@@ -29,5 +29,5 @@ node_modules
 .idea
 
 # temporary include the build files so we can npm install jsreport/jsreport-templates#2.0.0-beta
-studio/main.js
-studio/main.js.map
+# studio/main.js
+# studio/main.js.map
