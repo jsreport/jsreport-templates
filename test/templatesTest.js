@@ -33,6 +33,11 @@ describe('templating', function () {
     res.content.toString().should.be.eql('foo')
   })
 
+  it('should fallback to use inline content when template not found', async () => {
+    const res = await jsreport.render({ template: { name: 'unknown', content: 'foo', recipe: 'html', 'engine': 'none' } })
+    res.content.toString().should.be.eql('foo')
+  })
+
   it('should set report name as template name by default', async () => {
     const template = await jsreport.documentStore.collection('templates').insert({name: 'baz', content: 'foo', recipe: 'html', engine: 'none'})
     const res = await jsreport.render({ template: { name: template.name } })
