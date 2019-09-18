@@ -1,6 +1,6 @@
 {
   "name": "jsreport-templates",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "jsreport extension adding support for storing templates",
   "scripts": {
     "start": "jsreport-studio-start --httpPort 5488",
