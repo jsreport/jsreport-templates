@@ -197,6 +197,64 @@ describe('templating', function () {
     res.content.toString().should.be.eql('foo')
   })
 
+  it('should not find template if it does not exists at the specified absolute path (query root and template nested)', async () => {
+    await jsreport.documentStore.collection('folders').insert({
+      name: 'templates',
+      shortid: 'templates'
+    })
+
+    await jsreport.documentStore.collection('templates').insert({
+      name: 'foo',
+      content: 'foo',
+      engine: 'none',
+      recipe: 'html',
+      folder: {
+        shortid: 'templates'
+      }
+    })
+
+    return jsreport.render({
+      template: {
+        name: '/foo'
+      }
+    }).should.be.rejectedWith(/Unable to find specified template/)
+  })
+
+  it('should not find template if it does not exists at the specified absolute path (query nested and template at root)', async () => {
+    await jsreport.documentStore.collection('folders').insert({
+      name: 'templates',
+      shortid: 'templates'
+    })
+
+    await jsreport.documentStore.collection('templates').insert({
+      name: 'foo',
+      content: 'foo',
+      engine: 'none',
+      recipe: 'html'
+    })
+
+    return jsreport.render({
+      template: {
+        name: '/templates/foo'
+      }
+    }).should.be.rejectedWith(/Unable to find specified template/)
+  })
+
+  it('should not find template if it does not exists at the specified absolute path (query nested and parent folder does not exists)', async () => {
+    await jsreport.documentStore.collection('templates').insert({
+      name: 'foo',
+      content: 'foo',
+      engine: 'none',
+      recipe: 'html'
+    })
+
+    return jsreport.render({
+      template: {
+        name: '/templates/foo'
+      }
+    }).should.be.rejectedWith(/Unable to find specified template/)
+  })
+
   it('should throw error when path is not absolute', async () => {
     await jsreport.documentStore.collection('folders').insert({
       name: 'folder',
