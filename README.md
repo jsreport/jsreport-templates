@@ -1,4 +1,4 @@
-**⚠️ This repository has been moved to the monorepo [jsreport/jsreport](https://github.com/jsreport/jsreport)**
+**⚠️ This repository is deprecated since jsreport v3, its features has been integrated directly to [@jsreport/jsreport-core](https://github.com/jsreport/jsreport/tree/master/packages/jsreport-core) and [@jsreport/jsreport-studio](https://github.com/jsreport/jsreport/tree/master/packages/jsreport-studio)**
 --
 
 # jsreport-templates
